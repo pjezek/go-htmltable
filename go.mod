@@ -1,4 +1,4 @@
-module github.com/nfx/go-htmltable
+module github.com/pjezek/go-htmltable
 
 go 1.18
 
