@@ -2,6 +2,7 @@
 package htmltable
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -199,11 +200,18 @@ func (p *Page) parse(n *html.Node) {
 		return
 	}
 	switch n.Data {
-	case "td", "th":
+	case "th":
 		p.colSpan = append(p.colSpan, p.intAttrOr(n, "colspan", 1))
 		p.rowSpan = append(p.rowSpan, p.intAttrOr(n, "rowspan", 1))
 		var sb strings.Builder
 		p.innerText(n, &sb)
+		p.row = append(p.row, sb.String())
+		return
+	case "td":
+		p.colSpan = append(p.colSpan, p.intAttrOr(n, "colspan", 1))
+		p.rowSpan = append(p.rowSpan, p.intAttrOr(n, "rowspan", 1))
+		var sb strings.Builder
+		p.extractHTML(n, &sb)
 		p.row = append(p.row, sb.String())
 		return
 	case "tr":
@@ -367,6 +375,14 @@ ROWS:
 		Header: header,
 		Rows:   rows,
 	})
+}
+func (p *Page) extractHTML(n *html.Node, sb *strings.Builder) {
+	if n == nil {
+		return
+	}
+	var b bytes.Buffer
+	html.Render(&b, n)
+	sb.WriteString(b.String())
 }
 
 func (p *Page) innerText(n *html.Node, sb *strings.Builder) {
