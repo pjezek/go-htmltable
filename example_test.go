@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/pjezek/go-htmltable"
+	"github.com/nfx/go-htmltable"
 )
 
 func ExampleNewSliceFromUrl() {
